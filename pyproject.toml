@@ -1,0 +1,90 @@
+[project]
+name = "yuca"
+version = "0.1.0"
+description = "CLI tool for fast personal data processing and visualization"
+readme = "README.md"
+authors = [
+    { name = "Jorge Morgado Vega", email = "jorge.morgadov@gmail.com" },
+    { name = "Gustavo Viera-López", email = "gvieralopez@gmail.com" },
+]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = [
+    "tremplate handler",
+    "cv generator",
+]
+dependencies = [
+    "GitPython >= 3.1.31",
+    "typer >= 0.9.0",
+    "ruamel-yaml >= 0.17.32",
+    "jinja2 >= 3.1.2",
+]
+requires-python = ">=3.10"
+
+[options]
+packages = [
+    { name = "pactus", include = true },
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy",
+    "black",
+    "pylint",
+    "bumpver",
+    "isort",
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://github.com/yuca-devs/yuca"
+
+[tool.isort]
+profile = "black"
+known_first_party = ["pactus"]
+
+[tool.black]
+target-version = ["py38"]
+
+[tool.pylint."MESSAGES CONTROL"]
+max-line-length = 88
+
+[tool.bumpver]
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
+commit = false
+tag = false
+push = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"',
+]
+"yuca/__init__.py" = [
+    '__version__ = "{version}"',
+]
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+yuca = "yuca.main:main"
+
+[tool.mypy]
+python_version = "3.10"
+exclude = [
+    "docs",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "yupi.*",
+    "sklearn.*",
+]
+ignore_missing_imports = true
