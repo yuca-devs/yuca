@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import typer
 from typing_extensions import Annotated
@@ -31,8 +32,24 @@ def warehosue_init(path: Annotated[str, typer.Argument()] = "."):
     AppData.add_warehouse(main_folder.absolute())
 
 
-@warehouse_app.command(name="set-default", help="Sets a warehouse as default")
-def warehosue_set_default(path: Annotated[str, typer.Argument()] = "."):
+@warehouse_app.command(name="switch", help="Sets a warehouse as default")
+def warehosue_set_default(path: Annotated[Optional[str], typer.Argument()] = None):
+    if path is None:
+        current_wh = AppData.instance().current_wh
+        warehouses = AppData.instance().warehouses
+        print("Warehouses: (* current)")
+        for i, wh in enumerate(warehouses):
+            current = "*" if i == current_wh else " "
+            print(f" {current} {i + 1}. {wh}")
+        try:
+            idx = int(input("Select a warehouse number: ")) - 1
+            if idx < 0 or idx >= len(warehouses):
+                raise ValueError()
+            path = warehouses[idx]
+        except ValueError:
+            print("Invalid selection")
+            return
+
     main_folder_path = str(Path(path).absolute().resolve())
 
     if main_folder_path not in AppData.get_warehouses():
@@ -42,4 +59,7 @@ def warehosue_set_default(path: Annotated[str, typer.Argument()] = "."):
             sep="\n",
         )
         return
-    AppData.set_default_warehouse(main_folder_path)
+
+    AppData.switch_to_warehouse(main_folder_path)
+
+    print(f"Switched to warehouse: '{AppData.get_default_warehouse()}'")

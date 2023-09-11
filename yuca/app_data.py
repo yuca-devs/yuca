@@ -28,11 +28,19 @@ class AppData:
         )
 
         self.warehouses = self.data.get("warehouses", []) or []
-        self.default_wh = self.data.get("default_wh", 0)
+        self.current_wh = self.data.get("current_wh", 0)
+
+        self._check_warehouses_path()
+
+    def _check_warehouses_path(self):
+        current_wh_path = self.warehouses[self.current_wh]
+        self.warehouses = [wh for wh in self.warehouses if Path(wh).exists()]
+        self.current_wh = self.warehouses.index(current_wh_path)
+        self._update()
 
     def _update(self):
         self.data["warehouses"] = self.warehouses
-        self.data["default_wh"] = self.default_wh
+        self.data["current_wh"] = self.current_wh
         save_yaml(self.data, self.app_data_dir)
 
     @classmethod
@@ -55,16 +63,16 @@ class AppData:
     def get_default_warehouse() -> str:
         assert AppData.has_warehouses()
         inst = AppData.instance()
-        return inst.warehouses[inst.default_wh]
+        return inst.warehouses[inst.current_wh]
 
     @staticmethod
     @update_data_after_run
-    def set_default_warehouse(warehouse: int | str | Path):
+    def switch_to_warehouse(warehouse: int | str | Path):
         assert AppData.has_warehouses()
         inst = AppData.instance()
         if isinstance(warehouse, (str, Path)):
             warehouse = inst.warehouses.index(str(warehouse))
-        inst.default_wh = warehouse
+        inst.current_wh = warehouse
 
     @staticmethod
     @update_data_after_run
