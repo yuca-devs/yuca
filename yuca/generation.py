@@ -164,7 +164,7 @@ def generate(
     overridable_files = config.get("overridable_files", {}) or {}
     user_files = user_config.get("files", {}) or {}
     process_files(
-        Path(user_config["root"]),
+        Path(user_config["static"]),
         overridable_files,
         output_folder,
         user_files,

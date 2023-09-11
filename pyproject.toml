@@ -22,12 +22,14 @@ dependencies = [
     "typer >= 0.9.0",
     "ruamel-yaml >= 0.17.32",
     "jinja2 >= 3.1.2",
+    "platformdirs >= 3.10.0",
+    "typing_extensions >= 4.7.1",
 ]
 requires-python = ">=3.10"
 
 [options]
 packages = [
-    { name = "pactus", include = true },
+    { name = "yuca", include = true },
 ]
 
 [project.optional-dependencies]
@@ -45,7 +47,7 @@ Homepage = "https://github.com/yuca-devs/yuca"
 
 [tool.isort]
 profile = "black"
-known_first_party = ["pactus"]
+known_first_party = ["yuca"]
 
 [tool.black]
 target-version = ["py38"]
@@ -73,6 +75,9 @@ push = false
 requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.package-data]
+"*" = ["*.yml"]
+
 [project.scripts]
 yuca = "yuca.main:main"
 
@@ -82,9 +87,4 @@ exclude = [
     "docs",
 ]
 
-[[tool.mypy.overrides]]
-module = [
-    "yupi.*",
-    "sklearn.*",
-]
 ignore_missing_imports = true

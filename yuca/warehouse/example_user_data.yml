@@ -1,0 +1,113 @@
+lang: en
+
+personal:
+  name: Name
+  last_name: Last Name
+  email: youremail@gmail.com
+  phone: +12 34567890
+  location: Location
+  slogan: Slogan
+  website: personalwebsite.io
+
+socials:
+  linkedin: https://www.linkedin.com/in/.../
+  twitter: https://twitter.com/...
+  github: https://github.com/...
+  googlescholar: https://scholar.google.com/citations?user=...
+  orcid: https://orcid.org/0000-0000-0000-0000
+
+education:
+  - degree: Degree title
+    start_year: 2022
+    end_year: present
+    institution: Institution
+    location: City, Country
+    thesis_title: Thesis title
+    exams: 5
+  - degree: Degree title
+    start_year: 2017
+    end_year: 2022
+    institution: Institution
+    location: City, Country
+    thesis_title: Thesis title
+    exams: 48
+
+experience:
+  - title: Position name
+    start_year: 2023
+    end_year: present
+    institution: Instituion, organization or enterprice
+    location: City, Country
+    highlights:
+      - Some highlights about this position
+  - title: Anothe position
+    start_year: 2019
+    end_year: 2023
+    institution: Instituion, organization or enterprice
+    location: City, Country
+    highlights:
+      - Some highlights about this position
+
+publications:
+  - title: Publication title
+    year: 2023
+    venue: Venue 131, 679, 2023
+    citations: 4
+    coauthors: J. Doe, M. Smith
+    link: https://scholar.google.com/citations....
+
+languages:
+  en:
+    name: English
+    level: Native proficiency
+    score: 5
+    flag: gb
+  es:
+    name: Spanish
+    level: Professional working proficiency
+    score: 5
+    flag: es
+
+projects:
+  - title: Project title
+    start_year: 2020
+    end_year: 2023
+    highlights:
+      - Some highlights about this project
+    skills:
+      - Python
+      - GitHub
+      - CI/CD
+  - title: Another project
+    start_year: 2022
+    end_year: 2023
+    highlights:
+      - Some highlights about this project
+    skills:
+      - Python
+      - Tensforflow
+
+skills:
+  Programming Languages:
+    - Python
+    - C/C++
+    - LaTeX
+  Software Development:
+    - Git
+    - GitHub
+    - CI/CD
+    - Unix
+    - HTML5/CSS
+  Data Science:
+    - Machine Learning
+    - Data Cleaning
+    - Data Visualization
+  Soft Skills:
+    - Teamwork
+    - Adaptability
+
+stats:
+  publications: 7
+  citations: 38
+  students: 13
+  courses_taught: 9
