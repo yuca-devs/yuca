@@ -33,9 +33,15 @@ class AppData:
         self._check_warehouses_path()
 
     def _check_warehouses_path(self):
+        if not self.warehouses:
+            return
         current_wh_path = self.warehouses[self.current_wh]
         self.warehouses = [wh for wh in self.warehouses if Path(wh).exists()]
-        self.current_wh = self.warehouses.index(current_wh_path)
+        self.current_wh = (
+            self.warehouses.index(current_wh_path)
+            if current_wh_path in self.warehouses
+            else 0
+        )
         self._update()
 
     def _update(self):
