@@ -24,7 +24,7 @@ def get_repo_name_from_url(url: str) -> str | None:
 
 
 def _resolve_git_template(url: str, name: str | None):
-    wh_folder = Path(AppData.get_default_warehouse())
+    wh_folder = Path(AppData.active_warehouse())
     templates_folder = wh_folder / "templates"
     os.chdir(str(templates_folder))
 
@@ -33,7 +33,12 @@ def _resolve_git_template(url: str, name: str | None):
         print("Invalid url {url}")
         return
 
-    Repo.clone_from(url, to_path=str(templates_folder / template_name), depth=1)
+    final_template_path = templates_folder / template_name
+    if final_template_path.exists():
+        print(f"Template '{template_name}' already exists in your active warehouse")
+        return
+
+    Repo.clone_from(url, to_path=str(final_template_path), depth=1)
 
     base_recipe = templates_folder / template_name / "base-recipe.yml"
     if base_recipe.exists():

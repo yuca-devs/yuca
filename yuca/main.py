@@ -32,7 +32,7 @@ def _resolve_recipe_path(recipe: str) -> str | None:
     if recipe_path.exists():
         return str(recipe_path)
 
-    recipes_folder = Path(AppData.get_default_warehouse()) / "recipes"
+    recipes_folder = Path(AppData.active_warehouse()) / "recipes"
     for file in recipes_folder.glob("*.yml"):
         if recipe == file.stem:
             return str(file.resolve())
@@ -53,7 +53,7 @@ def generate(
         print(f"Invalid recipe '{recipe}'")
         return
 
-    wh_folder = Path(AppData.get_default_warehouse())
+    wh_folder = Path(AppData.active_warehouse())
     recipe_data = load_recipe(recipe_path)
 
     template_folder = wh_folder / "templates" / recipe_data["template"]
