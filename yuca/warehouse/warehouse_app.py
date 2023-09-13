@@ -15,8 +15,8 @@ def warehosue_init(
     path: Annotated[
         str, typer.Argument(help="Path where to create the ware house")
     ] = ".",
-    set_current: Annotated[
-        bool, typer.Option(help="If true, sets the new warehouse as current")
+    activate: Annotated[
+        bool, typer.Option(help="If true, sets the new warehouse as active")
     ] = False,
 ):
     main_folder = Path(path).absolute().resolve()
@@ -38,22 +38,22 @@ def warehosue_init(
 
     AppData.add_warehouse(main_folder)
 
-    if set_current:
+    if activate:
         AppData.switch_to_warehouse(main_folder)
 
 
 @warehouse_app.command(name="show", help="Shows all of your warehouses")
 def warehouse_show():
-    current_wh = AppData.instance().current_wh
+    active_wh = AppData.instance().active_wh
     warehouses = AppData.instance().warehouses
-    print("Warehouses: (* current)")
+    print("Warehouses: (* active)")
     for i, wh in enumerate(warehouses):
-        current = "*" if i == current_wh else " "
-        print(f" {current} {i + 1}. {wh}")
+        active = "*" if i == active_wh else " "
+        print(f" {active} {i + 1}. {wh}")
 
 
-@warehouse_app.command(name="current", help="Shows the path of the current warehouse")
-def warehouse_current():
+@warehouse_app.command(name="active", help="Shows the path of the active warehouse")
+def warehouse_active():
     if not AppData.has_warehouses():
         print(
             "You have not create or register any warehouse",
@@ -61,10 +61,10 @@ def warehouse_current():
             sep="\n",
         )
         return
-    print(AppData.get_default_warehouse())
+    print(AppData.active_warehouse())
 
 
-@warehouse_app.command(name="switch", help="Sets a warehouse as current")
+@warehouse_app.command(name="switch", help="Sets a warehouse as active")
 def warehosue_set_default(
     path: Annotated[
         Optional[str],
@@ -98,4 +98,4 @@ def warehosue_set_default(
 
     AppData.switch_to_warehouse(main_folder_path)
 
-    print(f"Switched to warehouse: '{AppData.get_default_warehouse()}'")
+    print(f"Switched to warehouse: '{AppData.active_warehouse()}'")
