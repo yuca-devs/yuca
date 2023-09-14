@@ -190,7 +190,17 @@ def generate(
     context["settings"] = settings
 
     # Handle when lang is not in config.yml
-    context["intl"] = config["intl"].get(context["lang"])
+    languages = list(config.get("intl", {}).keys())
+    user_lang = context["lang"]
+    if languages and user_lang not in languages:
+        print(
+            f"This recipe does not support the '{user_lang}' defined by your data",
+            "The default language of the template will be used",
+            sep="\n",
+        )
+        user_lang = languages[0]
+
+    context["intl"] = config.get("intl", {}).get(user_lang, {})
 
     for temp_file in config["template_files"]:
         temp_file_path = output_folder / temp_file
