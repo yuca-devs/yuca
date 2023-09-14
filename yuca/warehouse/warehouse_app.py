@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -55,11 +56,8 @@ def warehouse_show():
 @warehouse_app.command(name="active", help="Shows the path of the active warehouse")
 def warehouse_active():
     if not AppData.has_warehouses():
-        print(
-            "You have not create or register any warehouse",
-            "Run 'yuca warehouse init --help' to see hoy to create a warehouse",
-            sep="\n",
-        )
+        logging.error("You have not created or registered any warehouse yet")
+        logging.info("Run: 'yuca warehouse init --help' for help creating a warehouse")
         return
     print(AppData.active_warehouse())
 
@@ -83,17 +81,15 @@ def warehosue_set_default(
                 raise ValueError()
             path = warehouses[idx]
         except ValueError:
-            print("Invalid selection")
+            logging.error("Invalid warehouse id selected")
             return
 
     main_folder_path = str(Path(path).absolute().resolve())
 
     if main_folder_path not in AppData.get_warehouses():
-        print(
-            f"The folder '{main_folder_path}' is not registered as a yuca warehouse",
-            f"Consider useing 'yuca warehouse init {main_folder_path}'",
-            sep="\n",
-        )
+        logging.error(
+            f"The folder '{main_folder_path}' is not registered as a yuca warehouse")
+        logging.info(f"Consider running 'yuca warehouse init {main_folder_path}'")
         return
 
     AppData.switch_to_warehouse(main_folder_path)

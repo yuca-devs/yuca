@@ -1,4 +1,5 @@
 import os
+import logging
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -50,7 +51,7 @@ def generate(
     recipe_path = _resolve_recipe_path(recipe)
 
     if recipe_path is None:
-        print(f"Invalid recipe '{recipe}'")
+        logging.error(f"Invalid recipe '{recipe}', nothing found in: {recipe_path}")
         return
 
     wh_folder = Path(AppData.active_warehouse())
@@ -60,10 +61,12 @@ def generate(
 
     # check if template exist
     if not template_folder.exists():
-        print(
-            f"There is no '{recipe_data['template']}' in your warehouse\n"
-            f"Consider using:\n  yuca template get [{recipe_data['template']}-"
-            f"template-url] --name {recipe_data['template']}"
+        template_name = recipe_data['template']
+        logging.error(
+            f"There is no '{template_name}' in your warehouse\n")
+        logging.info(
+            f"Consider using:\n  yuca template get [{template_name}-template-url] " 
+            "--name {template_name}"
         )
         return
 

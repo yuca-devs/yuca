@@ -146,7 +146,7 @@ def process_files(
         dst_path = output_folder / template_file
 
         if not src_path.exists():
-            print(f"File '{src_path}' does not exists")
+            logging.error(f"Failed to fetch required file '{src_path}'")
             continue
 
         shutil.copyfile(str(src_path), str(dst_path))
