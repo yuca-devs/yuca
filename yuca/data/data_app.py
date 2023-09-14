@@ -73,6 +73,19 @@ def update_publications(data: dict) -> dict:
     logging.info(f"Found {len(data['publications'])} publications from google scholar")
     return data
 
+def update_stats(data: dict) -> dict:
+    publications_data = data["publications"]
+    students_data = data["students"]
+    courses_taught_data = data["courses_taught"]
+
+    data["stats"]["publications"] = len(publications_data)
+    data["stats"]["citations"] = sum(p["citations"] for p in publications_data)
+    data["stats"]["students"] = len(students_data)
+    data["stats"]["courses_taught"] = sum(len(c["dates"]) for c in courses_taught_data)
+
+    return data
+
+
 @data_app.command("update")
 def data_update():
     data_folder = Path(AppData.active_warehouse()) / "data"
@@ -80,4 +93,5 @@ def data_update():
         data = load_user_data(str(file))
         logging.info(f"Updating '{file.stem}' data")
         data = update_publications(data)
+        data = update_stats(data)
         save_yaml(data, str(file))
