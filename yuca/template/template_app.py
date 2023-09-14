@@ -40,6 +40,27 @@ def _copy_base_recipe(template_path: Path, recipe_name: str):
 def _resolve_zip_template(url: str, name: str | None):
     raise NotImplementedError()
 
+def _update_git_template(template_path: Path):
+    template_repo = Repo(template_path)
+    template_repo.git.pull()
+
+def _template_full_path(template_name: str):
+    templates_folder = Path(AppData.active_warehouse()) / "templates"
+    return templates_folder / template_name
+
+@template_app.command("update", help="Update an existing yuca template")
+def template_update(template_name: str):
+    # Resolve the template full path 
+    final_template_path = _template_full_path(template_name)
+    if not final_template_path.exists():
+        logging.error(f"Template '{template_name}' doesn't exists in your active warehouse")
+        return
+    template_content = [element.name for element in final_template_path.iterdir()]
+    if ".git" in template_content:
+        _update_git_template(final_template_path)
+    else:
+        logging.error(f"Template: '{template_name}' has no update mechanism")
+
 
 @template_app.command("get", help="Download a yuca template from a url")
 def template_get(url: str, name: Annotated[Optional[str], typer.Option()] = None, 
@@ -50,12 +71,8 @@ def template_get(url: str, name: Annotated[Optional[str], typer.Option()] = None
         logging.error("Invalid url {url}")
         return
 
-    # Go to the templates directory
-    templates_folder = Path(AppData.active_warehouse()) / "templates"
-    os.chdir(str(templates_folder))
-
     # Check that there are not other templates with the same name  
-    final_template_path = templates_folder / template_name
+    final_template_path = _template_full_path(template_name)
     if final_template_path.exists():
         logging.error(f"Template '{template_name}' already exists in your active warehouse")
         return
