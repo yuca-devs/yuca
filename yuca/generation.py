@@ -155,7 +155,12 @@ def preprocess_ctx_with_user_settings(context, user_config):
 def generate(
     template_folder: Path, output_folder: Path, user_config: dict, user_data: dict
 ):
-    shutil.copytree(template_folder, output_folder, dirs_exist_ok=True)
+    shutil.copytree(
+        template_folder,
+        output_folder,
+        dirs_exist_ok=True,
+        ignore=lambda _, names: [".git"] if ".git" in names else [],
+    )
 
     config = load_template_config(str(template_folder / "config.yml"))
     context = user_data
