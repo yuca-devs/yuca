@@ -16,7 +16,7 @@ app.add_typer(template_app, name="template")
 
 
 def _run_cmd(cmd):
-    print(f"Running {cmd}")
+    print(f"> {cmd}")
     os.system(cmd)
 
 

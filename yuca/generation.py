@@ -159,7 +159,7 @@ def generate(
         template_folder,
         output_folder,
         dirs_exist_ok=True,
-        ignore=lambda _, names: [".git"] if ".git" in names else [],
+        ignore=lambda _, names: [n for n in names if n.startswith(".git")],
     )
 
     config = load_template_config(str(template_folder / "config.yml"))
