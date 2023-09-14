@@ -1,9 +1,8 @@
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Annotated
 
 import typer
-from typing_extensions import Annotated
 
 from yuca.app_data import AppData
 from yuca.data_handlers import load_yaml, save_yaml

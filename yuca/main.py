@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -7,6 +7,7 @@ import typer
 
 import yuca.generation as gen
 from yuca.app_data import AppData
+from yuca.data.data_app import data_app
 from yuca.data_handlers import load_recipe, load_user_data_from_recipe
 from yuca.template.template_app import template_app
 from yuca.warehouse.warehouse_app import warehouse_app
@@ -14,6 +15,7 @@ from yuca.warehouse.warehouse_app import warehouse_app
 app = typer.Typer()
 app.add_typer(warehouse_app, name="warehouse")
 app.add_typer(template_app, name="template")
+app.add_typer(data_app, name="data")
 
 
 def _run_cmd(cmd):
