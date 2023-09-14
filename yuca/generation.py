@@ -142,9 +142,14 @@ def process_files(
         template_file = overridable_files.get(key, None)
         if template_file is None:
             continue
-        src_path = str(user_folder / user_file)
-        dst_path = str(output_folder / template_file)
-        shutil.copyfile(src_path, dst_path)
+        src_path = user_folder / user_file
+        dst_path = output_folder / template_file
+
+        if not src_path.exists():
+            print(f"File '{src_path}' does not exists")
+            continue
+
+        shutil.copyfile(str(src_path), str(dst_path))
 
 
 def preprocess_ctx_with_user_settings(context, user_config):
