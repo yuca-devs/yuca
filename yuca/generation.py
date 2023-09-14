@@ -198,12 +198,12 @@ def generate(
     languages = list(config.get("intl", {}).keys())
     user_lang = context["lang"]
     if languages and user_lang not in languages:
-        print(
-            f"This recipe does not support the '{user_lang}' defined by your data",
-            "The default language of the template will be used",
-            sep="\n",
+        default_lang = languages[0]
+        logging.warning(
+            f"Template '{template_folder.name}' doesn't support '{user_lang}' language."
+            f" Default language: '{default_lang}' will be used instead"
         )
-        user_lang = languages[0]
+        user_lang = default_lang
 
     context["intl"] = config.get("intl", {}).get(user_lang, {})
 
