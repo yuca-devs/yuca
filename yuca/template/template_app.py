@@ -27,13 +27,14 @@ def get_repo_name_from_url(url: str) -> str | None:
 def _resolve_git_template(url: str, destination_path: Path):
     Repo.clone_from(url, to_path=str(destination_path), depth=1)
 
-def _copy_base_recipe(template_path: Path):
+def _copy_base_recipe(template_path: Path, recipe_name: str):
+    recipe_name = recipe_name if recipe_name.endswith('.yml') else f'{recipe_name}.yml'
     wh_folder = Path(AppData.active_warehouse())
     base_recipe = template_path / "base-recipe.yml"
     if base_recipe.exists():
         shutil.copyfile(
             str(base_recipe),
-            str(wh_folder / "recipes" / f"{template_path.name}-base-recipe.yml"),
+            str(wh_folder / "recipes" / recipe_name),
         )
 
 def _resolve_zip_template(url: str, name: str | None):
@@ -41,7 +42,8 @@ def _resolve_zip_template(url: str, name: str | None):
 
 
 @template_app.command("get", help="Download a yuca template from a url")
-def template_get(url: str, name: Annotated[Optional[str], typer.Option()] = None):
+def template_get(url: str, name: Annotated[Optional[str], typer.Option()] = None, 
+                 base_recipe: Annotated[Optional[str], typer.Option()] = None):
     # Resolve the template name to be used locally
     template_name = get_repo_name_from_url(url) if name is None else name
     if template_name is None:
@@ -67,4 +69,5 @@ def template_get(url: str, name: Annotated[Optional[str], typer.Option()] = None
         logging.error(f"Invalid template url: '{url}'")
 
     # Copy base recipe to the recipes folder of the warehouse
-    _copy_base_recipe(final_template_path)
+    if base_recipe is not None:
+        _copy_base_recipe(final_template_path, base_recipe)
