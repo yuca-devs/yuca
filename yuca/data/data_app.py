@@ -12,6 +12,7 @@ from yuca.data_handlers import load_user_data, save_yaml
 
 data_app = typer.Typer()
 
+
 def make_google_scholar_profile_html(profile_url) -> str:
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
@@ -24,9 +25,9 @@ def make_google_scholar_profile_html(profile_url) -> str:
 
 
 def parse_single_publication_info(citation):
-    title_element = citation.find('a', {'class': 'gsc_a_at'})
+    title_element = citation.find("a", {"class": "gsc_a_at"})
     title = title_element.text
-    link = 'https://scholar.google.com' + title_element['href']
+    link = "https://scholar.google.com" + title_element["href"]
     year = citation.find("td", {"class": "gsc_a_y"}).text
     citations = citation.find("td", {"class": "gsc_a_c"}).text
     gray_tags = citation.find_all("div", {"class": "gs_gray"})
@@ -39,11 +40,11 @@ def parse_single_publication_info(citation):
         "venue": venue,
         "citations": int(citations),
         "coauthors": coauthors,
-        "link": link
+        "link": link,
     }
 
 
-def parse_profile_html(html: str) -> dict:
+def parse_profile_html(html: str) -> list:
     soup = BeautifulSoup(html, "html.parser")
     publications = []
 
@@ -55,14 +56,15 @@ def parse_profile_html(html: str) -> dict:
 
 
 @functools.lru_cache
-def get_publications_info(profile_url) -> dict:
+def get_publications_info(profile_url) -> list:
     try:
         html = make_google_scholar_profile_html(profile_url)
-        return parse_profile_html(html) if html else dict()
+        return parse_profile_html(html) if html else list()
 
     except Exception as e:
         print("An error occurred:", e)
         return []
+
 
 def update_publications(data: dict) -> dict:
     profile_url = data.get("socials", {}).get("googlescholar", None)
@@ -72,6 +74,7 @@ def update_publications(data: dict) -> dict:
     data["publications"] = get_publications_info(profile_url)
     logging.info(f"Found {len(data['publications'])} publications from google scholar")
     return data
+
 
 def update_stats(data: dict) -> dict:
     publications_data = data["publications"]

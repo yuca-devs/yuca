@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Optional, Annotated
+from typing import Annotated, Optional
 
 import typer
 
@@ -87,7 +87,8 @@ def warehosue_set_default(
 
     if main_folder_path not in AppData.get_warehouses():
         logging.error(
-            f"The folder '{main_folder_path}' is not registered as a yuca warehouse")
+            f"The folder '{main_folder_path}' is not registered as a yuca warehouse"
+        )
         logging.info(f"Consider running 'yuca warehouse init {main_folder_path}'")
         return
 

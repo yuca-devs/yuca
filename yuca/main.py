@@ -63,11 +63,10 @@ def generate(
 
     # check if template exist
     if not template_folder.exists():
-        template_name = recipe_data['template']
-        logging.error(
-            f"There is no '{template_name}' in your warehouse\n")
+        template_name = recipe_data["template"]
+        logging.error(f"There is no '{template_name}' in your warehouse\n")
         logging.info(
-            f"Consider using:\n  yuca template get [{template_name}-template-url] " 
+            f"Consider using:\n  yuca template get [{template_name}-template-url] "
             "--name {template_name}"
         )
         return
