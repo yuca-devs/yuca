@@ -31,9 +31,9 @@ def warehosue_init(
     static_folder.mkdir(parents=True, exist_ok=True)
     recipes_folder.mkdir(parents=True, exist_ok=True)
 
-    example_user_data = load_yaml(str(Path(__file__).parent / "example_user_data.yml"))
-    user_data_file = data_folder / "en.yml"
-    if not user_data_file.exists():
+    if not list(data_folder.glob("*.yml")):
+        example_user_data = load_yaml(str(Path(__file__).parent / "example_user_data.yml"))
+        user_data_file = data_folder / "en.yml"
         save_yaml(example_user_data, str(user_data_file))
 
     AppData.add_warehouse(main_folder)
