@@ -12,12 +12,22 @@ VALID_ESCAPE_FORMATS = ["latex"]
 SETTINGS_VAR_REGEX = re.compile(r"([^\[\]]+)(\[(\d+)\]|)$")
 route = list[str | int]
 
+DEFAUL_JINJA_CONFIG = dict(
+    comment_start_string="{=",
+    comment_end_string="=}",
+)
 
-def fill_template_file(file: Path, content: dict = {}):
-    environment = jinja2.Environment(
-        comment_start_string="{=",
-        comment_end_string="=}",
-    )
+
+def fill_template_file(
+    file: Path,
+    content: dict = {},
+    config: dict = {},
+):
+    jinja_config: dict[str, Any] = DEFAUL_JINJA_CONFIG
+    for key, val in config.get("jinja_config", {}).items():
+        if re.match(key, str(file.absolute().resolve())):
+            jinja_config.update(val)
+    environment = jinja2.Environment(**jinja_config)
     template = environment.from_string(file.read_text())
     rendered_content = template.render(content)
     file.write_text(rendered_content)
@@ -214,4 +224,4 @@ def generate(
             logging.error(f"Template {template_folder} does not contains {temp_file}")
             continue
 
-        fill_template_file(temp_file_path, context)
+        fill_template_file(temp_file_path, context, config)
