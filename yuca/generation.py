@@ -29,6 +29,15 @@ def fill_template_file(
             jinja_config.update(val)
     environment = jinja2.Environment(**jinja_config)
     template = environment.from_string(file.read_text())
+
+    def defined_and_not_empty(var):
+        return len(content.get(var, [])) > 0
+
+    def defined_and_not_empty_any(*var):
+        return any(defined_and_not_empty(v) for v in var)
+
+    template.globals[defined_and_not_empty.__name__] = defined_and_not_empty
+    template.globals[defined_and_not_empty_any.__name__] = defined_and_not_empty_any
     rendered_content = template.render(content)
     file.write_text(rendered_content)
 

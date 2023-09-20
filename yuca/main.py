@@ -79,11 +79,13 @@ def generate(
 
     _handle_cmds(recipe_data.get("pre_cook", []) or [])
 
-    recipe_data["user_data"] = str(wh_folder / "data" / recipe_data["user_data"])
+    recipe_data["user_data"] = str(
+        (wh_folder / "data" / recipe_data["user_data"]).absolute().resolve()
+    )
     user_data = load_user_data_from_recipe(recipe_data)
 
     gen_config = recipe_data.get("gen_config", {}) or {}
-    gen_config["static"] = str(wh_folder / "static")
+    gen_config["static"] = str((wh_folder / "static").absolute().resolve())
 
     gen.generate(template_folder, output_folder, gen_config, user_data)
 
