@@ -70,8 +70,13 @@ def update_publications(data: dict) -> dict:
     if profile_url is None:
         logging.warning("You dont have socials.googlescholar defined in your data file")
         return data
-    data["publications"] = get_publications_info(profile_url)
-    logging.info(f"Found {len(data['publications'])} publications from google scholar")
+    publications = get_publications_info(profile_url)
+    if len(publications):
+        data["publications"] = publications
+        logging.info(f"Found {len(publications)} publications from google scholar")
+    else:
+        logging.warning(f"No publications found in google scholar. Nothing was updated")
+
     return data
 
 
