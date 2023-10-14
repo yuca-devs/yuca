@@ -37,7 +37,7 @@ def parse_single_publication_info(citation):
         "title": title,
         "year": int(year),
         "venue": venue,
-        "citations": int(citations),
+        "citations": int(citations) if citations != '' else 0,
         "coauthors": coauthors,
         "link": link,
     }
