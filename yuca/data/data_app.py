@@ -35,9 +35,9 @@ def parse_single_publication_info(citation):
 
     return {
         "title": title,
-        "year": int(year),
+        "year": int(year) if year else None,
         "venue": venue,
-        "citations": int(citations) if citations != '' else 0,
+        "citations": int(citations) if citations else 0,
         "coauthors": coauthors,
         "link": link,
     }
@@ -70,13 +70,32 @@ def update_publications(data: dict) -> dict:
     if profile_url is None:
         logging.warning("You dont have socials.googlescholar defined in your data file")
         return data
-    publications = get_publications_info(profile_url)
-    if len(publications):
-        data["publications"] = publications
-        logging.info(f"Found {len(publications)} publications from google scholar")
-    else:
-        logging.warning(f"No publications found in google scholar. Nothing was updated")
 
+    scraped = get_publications_info(profile_url)
+    logging.info(f"Found {len(scraped)} publications/preprints from google scholar")
+
+    publ_dict = {e["title"]: e for e in data["publications"]}
+    prep_dict = {e["title"]: e for e in data["preprints"]}
+
+    added, updated = 0, 0
+    for paper_entry in scraped:
+        title = paper_entry["title"]
+        is_preprint = "arxiv" in paper_entry["venue"].lower()
+        is_an_update = title in publ_dict or title in prep_dict
+        is_published_version = not is_preprint and title in prep_dict
+        entry_section = prep_dict if is_preprint else publ_dict
+
+        entry_section[title] = paper_entry
+        if is_published_version:
+            prep_dict.pop(title)
+        updated += is_an_update
+        added += not is_an_update
+
+    data["publications"] = list(publ_dict.values())
+    data["preprints"] = list(prep_dict.values())
+
+    logging.info(f"Added {added} new publications/preprints")
+    logging.info(f"Updated {updated} old publications/preprints")
     return data
 
 
