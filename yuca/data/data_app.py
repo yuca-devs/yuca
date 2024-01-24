@@ -12,6 +12,11 @@ from yuca.data_handlers import load_user_data, save_yaml
 data_app = typer.Typer()
 
 
+def with_query_params(url: str, **params) -> str:
+    url += "&" if "?" in url else "?"
+    return url + "&".join(f"{k}={v}" for k, v in params.items())
+
+
 def make_google_scholar_profile_html(profile_url) -> str:
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
@@ -29,6 +34,8 @@ def parse_single_publication_info(citation):
     link = "https://scholar.google.com" + title_element["href"]
     year = citation.find("td", {"class": "gsc_a_y"}).text
     citations = citation.find("td", {"class": "gsc_a_c"}).text
+    if citations.endswith("*"):
+        citations = citations[:-1]
     gray_tags = citation.find_all("div", {"class": "gs_gray"})
     coauthors = gray_tags[0].text
     venue = gray_tags[1].text
@@ -71,13 +78,23 @@ def update_publications(data: dict) -> dict:
         logging.warning("You dont have socials.googlescholar defined in your data file")
         return data
 
-    scraped = get_publications_info(profile_url)
+    scraped = []
+    cstart = 0
+    while True:
+        curr_page = with_query_params(profile_url, cstart=cstart, pagesize=100)
+        new_scraped = get_publications_info(curr_page)
+        if not new_scraped:
+            break
+        scraped += new_scraped
+        cstart += 100
+
     logging.info(f"Found {len(scraped)} publications/preprints from google scholar")
 
     publ_dict = {e["title"]: e for e in data["publications"]}
     prep_dict = {e["title"]: e for e in data["preprints"]}
 
     added, updated = 0, 0
+
     for paper_entry in scraped:
         title = paper_entry["title"]
         is_preprint = "arxiv" in paper_entry["venue"].lower()
